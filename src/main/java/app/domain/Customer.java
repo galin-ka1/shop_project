@@ -10,15 +10,19 @@ import java.util.List;
 import java.util.Objects;
 
 public class Customer {
-    private final long id;
+    private long id;
     private boolean isActive;
     private String name;
     private final List<Product> products=new ArrayList<>();
 
     public Customer(long id, boolean isActive, String name) {
-        this.id = id;
+
         this.isActive = isActive;
         this.name = name;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public long getId() {
