@@ -29,7 +29,7 @@ public class CustomerRepositoryMap implements CustomerRepository {
     @Override
     public Customer findById(Long id) {
         /*  return database.values().stream()
-                .filter(product -> customer.getId().equals(id))
+                .filter(customer -> customer.getId().equals(id))
                 .findFirst()
                 .orElse(null);*/
         return database.get(id);
@@ -41,18 +41,16 @@ public class CustomerRepositoryMap implements CustomerRepository {
         Long id = customer.getId(); // из customer достаем id
         String name = customer.getName();// из customer достаем name
 
-        Product oldCustomer = findById(id);
+        Customer oldCustomer = findById(id);
         // если он существует то поставить новое имя
         if (oldCustomer != null) {
             oldCustomer.setName();
         }
         return oldCustomer;
     }
-}
 
-@Override
-public boolean deleteById(Long id) {
-    {
+    @Override
+    public boolean deleteById(Long id) {
         Customer oldCustomer = findById(id);
         //
         if (oldCustomer == null) {
@@ -61,7 +59,5 @@ public boolean deleteById(Long id) {
         oldCustomer.setActive(false);
         return true;
     }
-
-
 
 }
