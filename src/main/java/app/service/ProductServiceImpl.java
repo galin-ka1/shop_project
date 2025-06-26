@@ -20,14 +20,16 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product save(Product product) {
         if (product == null) {
-            throw new ProductSaveException("Product can not be null");
+            throw new ProductSaveException("Product cannot be null");
         }
+
         String name = product.getName();
         if (name == null || name.trim().isEmpty() || name.length() < 3) {
             throw new ProductSaveException("Product name should be at least 3 characters long");
         }
+
         if (product.getPrice() <= 0) {
-            throw new ProductSaveException("Product price van not be negative and zero");
+            throw new ProductSaveException("Product price cannot be negative and zero");
         }
 
         product.setActive(true);
@@ -44,38 +46,39 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product getById(Long id) {
         Product product = repository.findById(id);
-        if (product == null || !product.isActive()) { // если продукт неактивный!
-            throw new ProductNotFoundException("Product with id " + id + " not found");
+
+        if (product == null || !product.isActive()) {
+            throw new ProductNotFoundException("Product with id = " + id + " nor found");
         }
         return product;
     }
 
     @Override
     public void update(Product product) {
-
         if (product == null) {
-            throw new ProductUpdateException("Product can not be null");
+            throw new ProductUpdateException("Product cannot be null");
         }
+
         Long id = product.getId();
         if (id == null || id < 0) {
-            throw new ProductUpdateException("Product name should be positive");
+            throw new ProductUpdateException("Product id should be positive");
         }
 
         String name = product.getName();
         if (name == null || name.trim().isEmpty() || name.length() < 3) {
             throw new ProductUpdateException("Product name should be at least 3 characters long");
         }
-        if (product.getPrice() <= 0) {
-            throw new ProductUpdateException("Product price van not be negative and zero");
-        }
-        repository.updateById(product);
 
+        if (product.getPrice() <= 0) {
+            throw new ProductUpdateException("Product price cannot be negative and zero");
+        }
+
+        repository.updateById(product);
     }
 
     @Override
     public void deleteById(Long id) {
         getById(id).setActive(false);
-
     }
 
     @Override
@@ -85,8 +88,9 @@ public class ProductServiceImpl implements ProductService {
                 .filter(p -> p.getName().equals(name))
                 .findFirst()
                 .orElse(null);
+
         if (product == null) {
-            throw new ProductNotFoundException("Product with name " + name + " not found");
+            throw new ProductNotFoundException("Product with name = " + name + " nor found");
         }
         product.setActive(false);
     }
@@ -98,23 +102,21 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public long getActiveProductsTotalCount() {
-
         return getAllActiveProducts().size();
     }
 
     @Override
     public double getActiveProductsTotalCost() {
-        return getAllActiveProducts()
-                .stream()
-                .mapToDouble(Product::getPrice)
+        return getAllActiveProducts().stream()
+                .mapToDouble(p -> p.getPrice())
                 .sum();
     }
 
     @Override
     public double getActiveProductsAveragePrice() {
-        return getAllActiveProducts()
-                .stream()
-                .mapToDouble(Product::getPrice)
-                .average().orElse(0);
+        return getAllActiveProducts().stream()
+                .mapToDouble(p -> p.getPrice())
+                .average()
+                .orElse(0);
     }
 }

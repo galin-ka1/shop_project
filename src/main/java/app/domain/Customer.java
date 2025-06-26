@@ -5,27 +5,28 @@ package app.domain;
 // которые не обязательно должны быть приватными или публичными. POJO обычно используется
 // для инкапсуляции бизнес-логики в приложениях
 
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+//POJO - Plain Old Java Object
 public class Customer {
-    private long id;
+    private Long id;
     private boolean isActive;
     private String name;
-    private final List<Product> products=new ArrayList<>();
+    private final List<Product> products = new ArrayList<>();
 
-    public Customer(long id, boolean isActive, String name) {
-
+    public Customer(boolean isActive, String name) {
         this.isActive = isActive;
         this.name = name;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -41,7 +42,7 @@ public class Customer {
         return name;
     }
 
-    public void setName() {
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -53,7 +54,7 @@ public class Customer {
     public boolean equals(Object o) {
         if (!(o instanceof Customer)) return false;
         Customer customer = (Customer) o;
-        return id == customer.id && isActive == customer.isActive && Objects.equals(name, customer.name) && Objects.equals(products, customer.products);
+        return isActive == customer.isActive && Objects.equals(id, customer.id) && Objects.equals(name, customer.name) && Objects.equals(products, customer.products);
     }
 
     @Override
@@ -63,12 +64,11 @@ public class Customer {
 
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer("Customer{");
-        sb.append("id=").append(id);
-        sb.append(", isActive=").append(isActive);
-        sb.append(", name='").append(name).append('\'');
-        sb.append(", products=").append(products);
-        sb.append('}');
-        return sb.toString();
+        return "Customer{" +
+                "id=" + id +
+                ", isActive=" + isActive +
+                ", name='" + name + '\'' +
+                ", products=" + products +
+                '}';
     }
 }

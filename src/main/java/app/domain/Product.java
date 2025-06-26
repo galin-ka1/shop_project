@@ -34,7 +34,7 @@ public class Product {
         return name;
     }
 
-    public void setName(String newName) {
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -42,7 +42,7 @@ public class Product {
         return price;
     }
 
-    public void setPrice(double newPrice) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
@@ -60,12 +60,11 @@ public class Product {
 
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer("Product{");
-        sb.append("id=").append(id);
-        sb.append(", isActive=").append(isActive);
-        sb.append(", name='").append(name).append('\'');
-        sb.append(", price=").append(price);
-        sb.append('}');
-        return sb.toString();
+        return "Product{" +
+                "id=" + id +
+                ", isActive=" + isActive +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                '}';
     }
 }

@@ -15,49 +15,48 @@ public class CustomerRepositoryMap implements CustomerRepository {
 
     @Override
     public Customer save(Customer customer) {
-        customer.setId(++currentId);// префиксная запись с 1, а если постпрефиксная(currentId++) то c 0
+        customer.setId(++currentId);// префиксная запись с 1, а если пост префиксная(currentId++) то c 0
         database.put(currentId, customer);// но можно database.put(product.getId(), product);
         return customer;
-
     }
 
     @Override
-    public List<Customer> findAll(Long id) {
+    public List<Customer> findAll() {
         return new ArrayList<>(database.values());
     }
 
     @Override
     public Customer findById(Long id) {
-        /*  return database.values().stream()
+         /*  return database.values().stream()
                 .filter(customer -> customer.getId().equals(id))
                 .findFirst()
                 .orElse(null);*/
         return database.get(id);
-
     }
 
     @Override
-    public Customer updateById(Customer customer) {
-        Long id = customer.getId(); // из customer достаем id
-        String name = customer.getName();// из customer достаем name
+    public Customer update(Customer customer) {
+        Long id = customer.getId();// из customer достаем id
+        String newName = customer.getName(); // из customer достаем name
 
-        Customer oldCustomer = findById(id);
-        // если он существует то поставить новое имя
-        if (oldCustomer != null) {
-            oldCustomer.setName();
+        Customer oldProduct = findById(id);
+
+        if (oldProduct != null) {
+            oldProduct.setName(newName);
         }
-        return oldCustomer;
+
+        return oldProduct;
     }
 
     @Override
     public boolean deleteById(Long id) {
-        Customer oldCustomer = findById(id);
-        //
-        if (oldCustomer == null) {
+        Customer oldProduct = findById(id);
+
+        if (oldProduct == null) {
             return false;
         }
-        oldCustomer.setActive(false);
+        oldProduct.setActive(false);
         return true;
     }
-
 }
+
