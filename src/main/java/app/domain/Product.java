@@ -71,11 +71,10 @@ public class Product {
 
     @Override
     public String toString() {
-        return "Product{" +
+        return "\u001B[32m"+"                            Product: " +
                 "id=" + id +
                 ", isActive=" + isActive +
                 ", name='" + name + '\'' +
-                ", price=" + price +
-                '}';
+                ", price=" + price  + "\u001B[0m";
     }
 }
