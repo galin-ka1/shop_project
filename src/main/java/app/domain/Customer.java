@@ -12,6 +12,8 @@ import java.util.Objects;
 
 //POJO - Plain Old Java Object
 public class Customer {
+
+
     private Long id;
     private boolean isActive;
     private String name;
@@ -21,6 +23,11 @@ public class Customer {
         this.isActive = isActive;
         this.name = name;
     }
+    public Customer(Long id) {
+        this.id = id;
+    }
+
+
 
     public void setId(Long id) {
         this.id = id;
@@ -46,8 +53,13 @@ public class Customer {
         this.name = name;
     }
 
-    public List<Product> getProducts() {
+    public List<Product> getProducts(Long id) {
         return products;
+
+    }
+    public List<Product> addProducts(Long id1) {
+        Product product= new Product(Long id1);
+        return List<Product>;
     }
 
     @Override
@@ -71,4 +83,6 @@ public class Customer {
                 ", products=" + products +
                 '}';
     }
+
+
 }

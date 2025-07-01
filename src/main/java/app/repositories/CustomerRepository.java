@@ -12,7 +12,7 @@ public interface CustomerRepository {
 
     Customer findById(Long id);
 
-    Customer update(Customer customer);
+    Customer updateById(Customer customer);
 
     boolean deleteById(Long id);
 }

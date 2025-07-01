@@ -3,6 +3,7 @@ package app.domain;
 import java.util.Objects;
 
 public class Product {
+
     private Long id;
     private boolean isActive;
     private String name;
@@ -24,6 +25,10 @@ public class Product {
         this.name = name;
         this.price = price;
     }
+    public Product(Long id) {
+        this.id = id;
+    }
+
 
     public void setId(Long id) {
         this.id = id;

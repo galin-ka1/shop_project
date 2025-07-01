@@ -34,8 +34,9 @@ public class CustomerRepositoryMap implements CustomerRepository {
         return database.get(id);
     }
 
+
     @Override
-    public Customer update(Customer customer) {
+    public Customer updateById(Customer customer) {
         Long id = customer.getId();// из customer достаем id
         String newName = customer.getName(); // из customer достаем name
 

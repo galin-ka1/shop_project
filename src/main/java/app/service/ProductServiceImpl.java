@@ -18,7 +18,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product save(Product product) {
+    public Product save(Product product) {//Сохранить продукт в базе данных (при сохранении продукт автоматически считается
+        //активным)
         if (product == null) {
             throw new ProductSaveException("Product cannot be null");
         }
@@ -37,14 +38,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getAllActiveProducts() {
+    public List<Product> getAllActiveProducts() {// Вернуть все продукты из базы данных (активные)
         return repository.findAll().stream()
                 .filter(x -> x.isActive())
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Product getById(Long id) {
+    public Product getById(Long id) {//Вернуть один продукт из базы данных по его идентификатору (если он активен)
         Product product = repository.findById(id);
 
         if (product == null || !product.isActive()) {
@@ -54,7 +55,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void update(Product product) {
+    public void update(Product product) {// Изменить один продукт в базе данных по его идентификатору.
         if (product == null) {
             throw new ProductUpdateException("Product cannot be null");
         }
@@ -77,12 +78,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void deleteById(Long id) {
+    public void deleteById(Long id) {// Удалить продукт из базы данных по его идентификатору
         getById(id).setActive(false);
     }
 
     @Override
-    public void deleteByName(String name) {
+    public void deleteByName(String name) {// Удалить продукт из базы данных по его наименованию.
         Product product = getAllActiveProducts()
                 .stream()
                 .filter(p -> p.getName().equals(name))
@@ -90,30 +91,36 @@ public class ProductServiceImpl implements ProductService {
                 .orElse(null);
 
         if (product == null) {
-            throw new ProductNotFoundException("Product with name = " + name + " nor found");
+            throw new ProductNotFoundException("Product with name = " + name + " not found");
         }
         product.setActive(false);
     }
 
     @Override
-    public void restoreById(Long id) {
-        getById(id).setActive(true);
+    public void restoreById(Long id) {// Восстановить удалённый продукт в базе данных по его идентификатору
+        Product product = repository.findById(id);
+
+        if (product == null) {
+            throw new ProductNotFoundException("Product with id = " + id + " nor found");
+        }
+        product.setActive(true);
+
     }
 
     @Override
-    public long getActiveProductsTotalCount() {
+    public long getActiveProductsTotalCount() {// Вернуть общее количество продуктов в базе данных (активных).
         return getAllActiveProducts().size();
     }
 
     @Override
-    public double getActiveProductsTotalCost() {
+    public double getActiveProductsTotalCost() {// Вернуть суммарную стоимость всех продуктов в базе данных (активных).
         return getAllActiveProducts().stream()
                 .mapToDouble(p -> p.getPrice())
                 .sum();
     }
 
     @Override
-    public double getActiveProductsAveragePrice() {
+    public double getActiveProductsAveragePrice() {// Вернуть среднюю стоимость продукта в базе данных (из активных)
         return getAllActiveProducts().stream()
                 .mapToDouble(p -> p.getPrice())
                 .average()

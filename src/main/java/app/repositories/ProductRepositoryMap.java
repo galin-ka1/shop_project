@@ -51,14 +51,14 @@ public class ProductRepositoryMap implements ProductRepository {
         Long id = product.getId();
         double newPrice = product.getPrice();
         String newName = product.getName();
-        boolean newActive = product.isActive();
+
 
         Product oldProduct = findById(id);
 
         if (oldProduct != null) {
             oldProduct.setName(newName);
             oldProduct.setPrice(newPrice);
-            oldProduct.setActive(newActive);
+
         }
 
         return oldProduct;
