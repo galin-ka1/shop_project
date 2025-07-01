@@ -27,9 +27,9 @@ public interface CustomerService {
 
     double getAverageCostProductsInBasket(Long id);
 
-    void addActiveProductInBasket();
+    void addActiveProductInBasket(Long id, Long id1);
 
-    void deleteProductById(Long id, Long id);
+    void deleteProductById(Long id, Long id1);
 
     void clearProductBasket(Long id);
 

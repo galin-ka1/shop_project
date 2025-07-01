@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.Arrays.stream;
+import static java.util.stream.Nodes.collect;
+
 public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository repository;
@@ -113,11 +116,8 @@ public class CustomerServiceImpl implements CustomerService {
         if (id == null || id < 0) {
             throw new CustomerUpdateException("Customer id should be positive");
         }
-        List<Product> products = customer.getProducts();
+        List<Product> products = customer.getProducts(id);
 
-        if (products == null || products.isEmpty()) {
-            return 0.0;
-        }
 
         return products.stream()
                 .mapToDouble(Product::getPrice)
@@ -131,7 +131,7 @@ public class CustomerServiceImpl implements CustomerService {
         if (id == null || id < 0) {
             throw new CustomerUpdateException("Customer id should be positive");
         }
-        List<Product> products = customer.getProducts();
+        List<Product> products = customer.getProducts(id);
 
         if (products == null || products.isEmpty()) {
             return 0.0;
@@ -144,7 +144,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public List<Product> addActiveProductInBasket(Long id, Long id1) {//Добавить товар в корзину покупателя по их идентификаторам (если оба активны)
+    public void addActiveProductInBasket(Long id, Long id1) {//Добавить товар в корзину покупателя по их идентификаторам (если оба активны)
         Customer customer = repository.findById(id);
 
         if (id == null || id < 0) {
@@ -152,7 +152,10 @@ public class CustomerServiceImpl implements CustomerService {
         }
         List<Product> products = customer.addProducts(id1);
 
-        return List < Product >;
+        if (products == null || products.isEmpty()) {
+            throw new ProductNotFoundException("Product cannot be null");
+        }
+
     }
 
     @Override
@@ -161,27 +164,32 @@ public class CustomerServiceImpl implements CustomerService {
         if (id == null || id < 0) {
             throw new CustomerUpdateException("Customer id should be positive");
         }
-        List<Product> products = customer.getProducts();
-
+        List<Product> products = customer.getProducts(id1);
         if (products == null || products.isEmpty()) {
-            return 0.0;
+            return;
+        }
+        List<Product> updatedProducts = products.stream()
+                .filter(product -> !id1.equals(product.getId()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void clearProductBasket(Long id) {//Полностью очистить корзину покупателя по его идентификатору (если он активен)
+        Customer customer = repository.findById(id);
+        if (id == null || id < 0) {
+            throw new CustomerUpdateException("Customer id should be positive");
+        }
+        List<Product> products = customer.getProducts();
+        if (products == null || products.isEmpty()) {
+            return;
         }
 
-        return products.stream()
-                .filter(product -> products.equals(Long id1)
+        List<Product> products = customer.getProducts();
+        if (products == null || products.isEmpty()) {
+            throw new ProductNotFoundException("Product not found"); // No products to clear
+        }
 
-                        .findFirst()
-                        .remove();
+        products.clear();
     }
 }
 
-@Override
-public void clearProductBasket(Long id) {//Полностью очистить корзину покупателя по его идентификатору (если он активен)
-
-
-}
-
-public ProductRepository getRepository() {
-    return productRepository;
-}
-}

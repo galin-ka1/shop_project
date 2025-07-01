@@ -27,8 +27,6 @@ public class Customer {
         this.id = id;
     }
 
-
-
     public void setId(Long id) {
         this.id = id;
     }
@@ -58,8 +56,9 @@ public class Customer {
 
     }
     public List<Product> addProducts(Long id1) {
-        Product product= new Product(Long id1);
-        return List<Product>;
+        Product product = new Product(id1);
+        products.add(product);
+        return products;
     }
 
     @Override
