@@ -179,10 +179,6 @@ public class CustomerServiceImpl implements CustomerService {
         if (id == null || id < 0) {
             throw new CustomerUpdateException("Customer id should be positive");
         }
-        List<Product> products = customer.getProducts();
-        if (products == null || products.isEmpty()) {
-            return;
-        }
 
         List<Product> products = customer.getProducts();
         if (products == null || products.isEmpty()) {
