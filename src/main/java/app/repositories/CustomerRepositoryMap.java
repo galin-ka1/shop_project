@@ -26,7 +26,7 @@ public class CustomerRepositoryMap implements CustomerRepository {
     }
 
     @Override
-    public Customer findById(Long id) {
+    public Customer getById(Long id) {
          /*  return database.values().stream()
                 .filter(customer -> customer.getId().equals(id))
                 .findFirst()

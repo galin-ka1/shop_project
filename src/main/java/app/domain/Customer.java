@@ -51,7 +51,7 @@ public class Customer {
         this.name = name;
     }
 
-    public List<Product> getProducts(Long id) {
+    public List<Product> getProducts() {
         return products;
 
     }
@@ -60,7 +60,9 @@ public class Customer {
         products.add(product);
         return products;
     }
+    public void setProducts(List<Product> updatedProducts) {
 
+    }
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Customer)) return false;
@@ -82,6 +84,7 @@ public class Customer {
                 ", products=" + products +
                 '}';
     }
+
 
 
 }

@@ -1,7 +1,7 @@
 package app.service;
 
 import app.domain.Customer;
-
+import app.domain.Product;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ public interface CustomerService {
 
     Customer save(Customer customer);
 
-    List<Customer> getAllActiveCustomer();
+    List<Customer> getAllActiveCustomers();
 
     Customer getById(Long id);
 
@@ -29,7 +29,7 @@ public interface CustomerService {
 
     void addActiveProductInBasket(Long id, Long id1);
 
-    void deleteProductById(Long id, Long id1);
+    List<Product> deleteProductById(Long id, Long id1);
 
     void clearProductBasket(Long id);
 

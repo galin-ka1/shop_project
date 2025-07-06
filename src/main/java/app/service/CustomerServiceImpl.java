@@ -6,20 +6,21 @@ import app.exceptions.*;
 import app.repositories.CustomerRepository;
 import app.repositories.ProductRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.stream;
-import static java.util.stream.Nodes.collect;
+
 
 public class CustomerServiceImpl implements CustomerService {
 
-    private final CustomerRepository repository;
+    private final CustomerRepository customerRepository;
+    private final ProductRepository productRepository;
+    private Product product;
 
-
-    public CustomerServiceImpl(CustomerRepository repository) {
-        this.repository = repository;
+    public CustomerServiceImpl(CustomerRepository customerRepository, ProductRepository productRepository) {
+        this.customerRepository = customerRepository;
+        this.productRepository = productRepository;
     }
 
     @Override
@@ -35,22 +36,22 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         customer.setActive(true);
-        return repository.save(customer);
+        return customerRepository.save(customer);
     }
 
     @Override
-    public List<Customer> getAllActiveCustomer() {//Вернуть всех покупателей из базы данных (активных)
-        return repository.findAll().stream()
+    public List<Customer> getAllActiveCustomers() {//Вернуть всех покупателей из базы данных (активных)
+        return customerRepository.findAll().stream()
                 .filter(x -> x.isActive())
                 .collect(Collectors.toList());
     }
 
     @Override
     public Customer getById(Long id) {// Вернуть одного покупателя из базы данных по его идентификатору (если он активен)
-        Customer customer = repository.findById(id);
+        Customer customer = customerRepository.getById(id);
 
         if (customer == null || !customer.isActive()) {
-            throw new CustomerNotFoundException("Customer with id = " + id + " nor found");
+            throw new CustomerNotFoundException("Customer with id = " + id + " not found");
         }
         return customer;
     }
@@ -71,17 +72,19 @@ public class CustomerServiceImpl implements CustomerService {
         if (name == null || name.trim().isEmpty() || name.length() < 3) {
             throw new CustomerUpdateException("Customer name should be at least 3 characters long");
         }
-        repository.updateById(customer);
+        customerRepository.updateById(customer);
     }
 
     @Override
     public void deleteCustomerById(Long id) {//Удалить покупателя из базы данных по его идентификатору
+        Customer customer=getById(id);
         getById(id).setActive(false);
+        customerRepository.updateById(customer);
     }
 
     @Override
     public void deleteCustomerByName(String name) {//Удалить покупателя из базы данных по его имени.
-        Customer customer = getAllActiveCustomer()
+        Customer customer = getAllActiveCustomers()
                 .stream()
                 .filter(p -> p.getName().equals(name))
                 .findFirst()
@@ -91,34 +94,33 @@ public class CustomerServiceImpl implements CustomerService {
             throw new CustomerNotFoundException("Customer with name = " + name + " not found");
         }
         customer.setActive(false);
+        customerRepository.updateById(customer);
     }
 
     @Override
     public void restoreById(Long id) {
-        Customer customer = repository.findById(id);// Восстановить удалённого покупателя в базе данных по его идентификатору
+        Customer customer = customerRepository.getById(id);// Восстановить удалённого покупателя в базе данных по его идентификатору
 
         if (customer == null) {
-            throw new CustomerNotFoundException("Customer with id = " + id + " nor found");
+            throw new CustomerNotFoundException("Customer with id = " + id + " not found");
         }
         customer.setActive(true);
-
+        customerRepository.updateById(customer);
     }
 
     @Override
     public long getAllActiveCustomersTotalCount() {//Вернуть общее количество покупателей в базе данных (активных).
-        return getAllActiveCustomer().size();
+        return getAllActiveCustomers().size();
     }
 
     @Override
     public double getAllProductsInBasket(Long id) {//Вернуть стоимость корзины покупателя по его идентификатору (если он активен)
-        Customer customer = repository.findById(id);
+        Customer customer = customerRepository.getById(id);
 
         if (id == null || id < 0) {
             throw new CustomerUpdateException("Customer id should be positive");
         }
-        List<Product> products = customer.getProducts(id);
-
-
+        List<Product> products = customer.getProducts();
         return products.stream()
                 .mapToDouble(Product::getPrice)
                 .sum();
@@ -127,11 +129,11 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public double getAverageCostProductsInBasket(Long id) {// Вернуть среднюю стоимость продукта в корзине покупателя по его идентификатору (если он
         //активен)
-        Customer customer = repository.findById(id);
+        Customer customer = customerRepository.getById(id);
         if (id == null || id < 0) {
             throw new CustomerUpdateException("Customer id should be positive");
         }
-        List<Product> products = customer.getProducts(id);
+        List<Product> products = customer.getProducts();
 
         if (products == null || products.isEmpty()) {
             return 0.0;
@@ -145,37 +147,42 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public void addActiveProductInBasket(Long id, Long id1) {//Добавить товар в корзину покупателя по их идентификаторам (если оба активны)
-        Customer customer = repository.findById(id);
+        Customer customer = customerRepository.getById(id);
 
         if (id == null || id < 0) {
             throw new CustomerUpdateException("Customer id should be positive");
         }
-        List<Product> products = customer.addProducts(id1);
+        Product products = productRepository.findById(id1);
 
-        if (products == null || products.isEmpty()) {
+        if (products == null || !products.isActive()) {
             throw new ProductNotFoundException("Product cannot be null");
         }
-
+        customer.getProducts().add(product);
+        customerRepository.updateById(customer);
     }
 
     @Override
-    public void deleteProductById(Long id, Long id1) {//Удалить товар из корзины покупателя по их идентификаторам
-        Customer customer = repository.findById(id);
+    public List<Product> deleteProductById(Long id, Long id1) {//Удалить товар из корзины покупателя по их идентификаторам
+        Customer customer = customerRepository.getById(id);
         if (id == null || id < 0) {
             throw new CustomerUpdateException("Customer id should be positive");
         }
-        List<Product> products = customer.getProducts(id1);
+        List<Product> products = customer.getProducts();
         if (products == null || products.isEmpty()) {
-            return;
+            return products;
         }
         List<Product> updatedProducts = products.stream()
-                .filter(product -> !id1.equals(product.getId()))
+                .filter(p -> !p.getId().equals(id1))
                 .collect(Collectors.toList());
+
+        customer.setProducts(updatedProducts);
+        customerRepository.updateById(customer);
+        return updatedProducts;
     }
 
     @Override
     public void clearProductBasket(Long id) {//Полностью очистить корзину покупателя по его идентификатору (если он активен)
-        Customer customer = repository.findById(id);
+        Customer customer = customerRepository.getById(id);
         if (id == null || id < 0) {
             throw new CustomerUpdateException("Customer id should be positive");
         }
@@ -186,6 +193,7 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         products.clear();
+        customerRepository.updateById(customer);
     }
 }
 

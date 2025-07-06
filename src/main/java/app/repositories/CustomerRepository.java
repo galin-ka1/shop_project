@@ -10,7 +10,7 @@ public interface CustomerRepository {
 
     List<Customer> findAll();
 
-    Customer findById(Long id);
+    Customer getById(Long id);
 
     Customer updateById(Customer customer);
 
