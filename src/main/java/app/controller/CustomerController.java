@@ -2,15 +2,9 @@ package app.controller;
 
 
 import app.domain.Customer;
-import app.domain.Product;
-import app.exceptions.CustomerNotFoundException;
-import app.exceptions.CustomerSaveException;
-import app.exceptions.CustomerUpdateException;
-import app.exceptions.ProductNotFoundException;
 import app.service.CustomerService;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 public class CustomerController {
@@ -66,8 +60,8 @@ public class CustomerController {
         customerService.addActiveProductInBasket(id, id1);
     }
 
-    public List<Product> deleteProductById(Long id, Long id1) {//Удалить товар из корзины покупателя по их идентификаторам
-        return customerService.deleteProductById(id, id1);
+    public void deleteProductById(Long id, Long id2) {//Удалить товар из корзины покупателя по их идентификаторам
+        customerService.deleteProductById(id, id2);
     }
 
     public void clearProductBasket(Long id) {//Полностью очистить корзину покупателя по его идентификатору (если он активен)

@@ -18,7 +18,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final ProductRepository productRepository;
     private Product product;
 
-    public CustomerServiceImpl(CustomerRepository customerRepository, ProductRepository productRepository) {
+    public CustomerServiceImpl(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
         this.productRepository = productRepository;
     }
